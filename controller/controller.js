@@ -9,10 +9,8 @@ app.post('/register', async (req, res) => {
     let usuario = await authentication.insertUser(user)
     await db.insertUser(usuario)
     res.status(200).json({message: `Usuario: ${user.username} inserido`})
-    console.log(usuario)
   } catch (error) {
     res.status(404).json({ message: error });
-    console.log(error);
     throw new Error(error);
   }
 })
@@ -24,7 +22,6 @@ app.post('/login', async (req, res) => {
     res.status(200).json({authentication})
   } catch (error) {
     res.status(404).json({ message: error });
-    console.log(error);
     throw new Error(error);
   }
 })
@@ -35,7 +32,6 @@ app.get("/books", async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     res.status(404).json({ message: "nada bom" });
-    console.log(error);
     throw new Error(error);
   }
 });
@@ -46,7 +42,6 @@ app.post("/insert", async (req, res) => {
     res.status(201).json({ message: "Livro salvo com sucesso" });
   } catch (error) {
     res.status(404).json({ message: "nada bom" });
-    console.log(error);
     throw new Error(error);
   }
 });
@@ -57,7 +52,6 @@ app.delete("/delete/:id", async (req, res) => {
     res.status(200).json({ message: "Deletado com sucesso" });
   } catch (error) {
     res.status(404).json({ message: "nada bom" });
-    console.log(error);
     throw new Error(error);
   }
 });
@@ -70,7 +64,6 @@ app.put("/update/:id", async (req, res) => {
     res.status(200).json({ message: "Atualizado com sucesso" });
   } catch (error) {
     res.status(404).json({ message: "nada bom" });
-    console.log(error);
     throw new Error(error);
   }
 });
