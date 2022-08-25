@@ -14,7 +14,7 @@ const insertUser = async (user) => {
       const password = cryptoJs.AES.encrypt(user.password, chave_secreta);
       let newPassword = cryptoJs.AES.decrypt(password, chave_secreta);
       newPassword = newPassword.toString(cryptoJs.enc.Base64)
-      
+
       newUser = {
         username: user.username,
         password: newPassword,
@@ -41,20 +41,3 @@ module.exports = {
   insertUser,
   auth,
 };
-
-// const encrypted = cryptoJs.SHA256('mensagem')
-// console.log(encrypted.toString(cryptoJs))
-
-// var key = "2e35f242a46d67eeb74aabc37d5e5d05";
-// var encrypted = cryptoJs.AES.encrypt("Message", key).toString(cryptoJs.enc.Base64); // Encryption Part
-// var decrypted = cryptoJs.AES.decrypt(encrypted, key).toString(cryptoJs.enc.Utf8); // Message
-// console.log(encrypted)
-// console.log(decrypted);
-
-// var encrypted = cryptoJs.AES.encrypt("Message", "Secret Passphrase");
-// // encrypted = encrypted.toString(cryptoJs.enc.Hex)
-// console.log(encrypted)
-// var decrypted = cryptoJs.AES.decrypt(encrypted, "Secret Passphrase");
-
-// console.log('dec',decrypted.toString(cryptoJs.enc.Hex))
-// console.log('descriptografo',decrypted.toString(cryptoJs.enc.Utf8))

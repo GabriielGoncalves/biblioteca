@@ -34,7 +34,6 @@ const searchUser = async (user) => {
     await connectDataBase();
     const collection = client.db(dbName).collection(collectionUser);
     const result = await collection.findOne({"username": user.name})
-    console.log(result)
     return result
   } catch (error) {}
 };
@@ -69,14 +68,12 @@ const deleteBook = async (_id) => {
 
 const updateBook = async (_id, documento) => {
   await connectDataBase();
-  console.log(_id, documento);
   const collection = client.db(dbName).collection(collectionEstoque);
   const results = await collection.updateOne(
     { _id: ObjectId(_id) },
     { $set: documento }
   );
   client.close();
-  console.log(results);
   return results;
 };
 
