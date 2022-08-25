@@ -1,6 +1,33 @@
 const db = require("../model/database");
 const app = require("express")();
-const jwt = require("jsonwebtoken");
+const authentication = require('../services/auth')
+
+
+app.post('/register', async (req, res) => {
+  const user = req.body
+  try {
+    let usuario = await authentication.insertUser(user)
+    await db.insertUser(usuario)
+    res.status(200).json({message: `Usuario: ${user.username} inserido`})
+    console.log(usuario)
+  } catch (error) {
+    res.status(404).json({ message: error });
+    console.log(error);
+    throw new Error(error);
+  }
+})
+app.post('/login', async (req, res) => {
+  const user = req.body
+  try {
+    const userFound = await searchUser(user)
+    const authentication = auth(user, userFound)
+    res.status(200).json({authentication})
+  } catch (error) {
+    res.status(404).json({ message: error });
+    console.log(error);
+    throw new Error(error);
+  }
+})
 
 app.get("/books", async (req, res) => {
   try {

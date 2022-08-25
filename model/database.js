@@ -4,7 +4,8 @@ const url = "mongodb://localhost:27017";
 const client = new MongoClient(url);
 
 const dbName = "biblioteca";
-const collectionName = "estoque";
+const collectionEstoque = "estoque";
+const collectionUser = "users";
 
 async function connectDataBase() {
   try {
@@ -16,10 +17,32 @@ async function connectDataBase() {
   }
 }
 
+const insertUser = async (user) => {
+  try {
+    await connectDataBase();
+    const collection = client.db(dbName).collection(collectionUser);
+    const result = await collection.insertOne(user);
+    client.close();
+    return result;
+  } catch (error) {
+    return e;
+  }
+};
+
+const searchUser = async (user) => {
+  try {
+    await connectDataBase();
+    const collection = client.db(dbName).collection(collectionUser);
+    const result = await collection.findOne({"username": user.name})
+    console.log(result)
+    return result
+  } catch (error) {}
+};
+
 const insertBook = async (documento) => {
   try {
     await connectDataBase();
-    const collection = client.db(dbName).collection(collectionName);
+    const collection = client.db(dbName).collection(collectionEstoque);
     const results = await collection.insertOne(documento);
     client.close();
     return results;
@@ -30,7 +53,7 @@ const insertBook = async (documento) => {
 
 const findBooks = async () => {
   await connectDataBase();
-  const collection = client.db(dbName).collection(collectionName);
+  const collection = client.db(dbName).collection(collectionEstoque);
   const results = await collection.find({}).toArray();
   client.close();
   return results;
@@ -38,7 +61,7 @@ const findBooks = async () => {
 
 const deleteBook = async (_id) => {
   await connectDataBase();
-  const collection = client.db(dbName).collection(collectionName);
+  const collection = client.db(dbName).collection(collectionEstoque);
   const results = await collection.deleteOne({ _id: ObjectId(_id) });
   client.close();
   return results;
@@ -47,7 +70,7 @@ const deleteBook = async (_id) => {
 const updateBook = async (_id, documento) => {
   await connectDataBase();
   console.log(_id, documento);
-  const collection = client.db(dbName).collection(collectionName);
+  const collection = client.db(dbName).collection(collectionEstoque);
   const results = await collection.updateOne(
     { _id: ObjectId(_id) },
     { $set: documento }
@@ -63,5 +86,7 @@ module.exports = {
   findBooks,
   updateBook,
   deleteBook,
-  client
+  insertUser,
+  searchUser,
+  client,
 };
