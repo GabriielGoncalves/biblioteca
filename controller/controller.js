@@ -6,20 +6,37 @@ const authentication = require('../services/auth')
 app.post('/register', async (req, res) => {
   const user = req.body
   try {
-    let usuario = await authentication.insertUser(user)
-    await db.insertUser(usuario)
-    res.status(200).json({message: `Usuario: ${user.username} inserido`})
+    let usuario = await authentication.findUser(user)
+    if(usuario){
+      res.status(200).json({message: `Usuario ${usuario.username} já está cadastrado!`})
+    }else {
+      const newUser = await authentication.insertUser(user)
+      await db.insertUser(newUser)
+      res.status(200).json({message: `Usuario ${newUser.username} cadastrado!`})
+    }
   } catch (error) {
     res.status(404).json({ message: error });
     throw new Error(error);
   }
 })
+
 app.post('/login', async (req, res) => {
   const user = req.body
+
   try {
-    const userFound = await searchUser(user)
-    const authentication = auth(user, userFound)
-    res.status(200).json({authentication})
+    const userFound = await authentication.findUser(user)
+    if(userFound){
+      const isAuthentication = await authentication.auth(user, userFound)
+      
+      if(!!isAuthentication){
+        res.status(200).json({message: `Bem vindo ${user.username}`})
+      }else {
+        res.status(400).json({message: `Usuario ou senha incorretos! Tente novamente.`})
+      }
+
+    } else {
+        res.status(400).json({message: `Usuario não cadastrado, favor cadastrar.`})
+      }
   } catch (error) {
     res.status(404).json({ message: error });
     throw new Error(error);

@@ -25,7 +25,7 @@ const insertUser = async (user) => {
     client.close();
     return result;
   } catch (error) {
-    return e;
+    return error;
   }
 };
 
@@ -33,7 +33,7 @@ const searchUser = async (user) => {
   try {
     await connectDataBase();
     const collection = client.db(dbName).collection(collectionUser);
-    const result = await collection.findOne({"username": user.name})
+    const result = await collection.findOne({"username": user.username})
     return result
   } catch (error) {}
 };
