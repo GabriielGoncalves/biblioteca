@@ -1,5 +1,6 @@
 const db = require("../model/database");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const findUser = async (user) => {
   try {
@@ -33,9 +34,19 @@ const insertUser = async (user) => {
 };
 
 const auth = async (user, userFound) => {
-  const isPasswordValid = await bcrypt.compare(user.password, userFound.password)
-
-  return isPasswordValid
+  const isPasswordValid = await bcrypt.compare(user.password.toString(), userFound.password)
+  
+  const token = jwt.sign({
+    user: userFound.username,
+    password: userFound.password,
+  }, 'CruzeiroÉCabuloso', {
+    expiresIn: '5h'
+  })
+  
+  return {
+    isPasswordValid,
+    token,
+  }
 };
 
 module.exports = {

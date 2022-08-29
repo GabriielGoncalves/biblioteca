@@ -1,6 +1,7 @@
 const db = require("../model/database");
 const app = require("express")();
 const authentication = require('../services/auth')
+const verifyToken = require('../middleware/verifyToken')
 
 
 app.post('/register', async (req, res) => {
@@ -27,7 +28,7 @@ app.post('/login', async (req, res) => {
     const userFound = await authentication.findUser(user)
     if(userFound){
       const isAuthentication = await authentication.auth(user, userFound)
-      
+      console.log(isAuthentication.token)
       if(!!isAuthentication){
         res.status(200).json({message: `Bem vindo ${user.username}`})
       }else {
@@ -53,7 +54,7 @@ app.get("/books", async (req, res) => {
   }
 });
 
-app.post("/insert", async (req, res) => {
+app.post("/insert", verifyToken, async (req, res) => {
   try {
     const result = await db.insertBook(req.body);
     res.status(201).json({ message: "Livro salvo com sucesso" });
@@ -63,7 +64,7 @@ app.post("/insert", async (req, res) => {
   }
 });
 
-app.delete("/delete/:id", async (req, res) => {
+app.delete("/delete/:id", verifyToken, async (req, res) => {
   try {
     const result = await db.deleteBook(req.params.id);
     res.status(200).json({ message: "Deletado com sucesso" });
@@ -73,7 +74,7 @@ app.delete("/delete/:id", async (req, res) => {
   }
 });
 
-app.put("/update/:id", async (req, res) => {
+app.put("/update/:id", verifyToken, async (req, res) => {
   const [id, body] = [req.params, req.body];
 
   try {
