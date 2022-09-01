@@ -38,6 +38,7 @@ const bookSchema = new mongoose.Schema({
     },
     publishingCompany: {
         type: String,
+        required: true
     },
     price: {
         type: Number,
