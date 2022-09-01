@@ -25,17 +25,15 @@ const searchUser = async (user) => {
   }
 };
 
-// const insertBook = async (documento) => {
-//   try {
-//     await connectDataBase();
-//     const collection = client.db(dbName).collection(collectionEstoque);
-//     const results = await collection.insertOne(documento);
-//     client.close();
-//     return results;
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// };
+const insertBook = async (book) => {
+  try {
+    const newBook = Book(book)
+    const results = newBook.save()
+    return results;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 const findBooks = async () => {
   try {
@@ -66,7 +64,7 @@ const findBooks = async () => {
 // };
 
 module.exports = {
-  // insertBook,
+  insertBook,
   findBooks,
   // updateBook,
   // deleteBook,
