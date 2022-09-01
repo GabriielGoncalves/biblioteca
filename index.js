@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const routes = require("./controller/controller");
 const mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
 const port = 3031;
 const app = express();
