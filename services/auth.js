@@ -4,53 +4,69 @@ const jwt = require("jsonwebtoken");
 
 const findUser = async (user) => {
   try {
-    const usuario = await db.searchUser(user);
-    if (usuario) {
-      return usuario;
+    const userFound = await db.searchUser(user);
+    
+    if (userFound) {
+      return userFound;
     } else return;
+
   } catch (error) {
-    return error;
+      throw new Error(error);
   }
 };
 
-const insertUser = async (user) => {
+const createUser = async (user) => {
   try {
-    let newUser = {};
+    let newUser = {...user};
 
     const newPassword = await bcrypt.hash(
       user.password.toString(),
       await bcrypt.genSalt()
     );
 
-    newUser = {
-      username: user.username,
-      password: newPassword,
-    };
+    newUser.password = newPassword;
 
     return newUser;
   } catch (error) {
-    return error;
+      throw new Error(error);
   }
 };
 
-const auth = async (user, userFound) => {
-  const isPasswordValid = await bcrypt.compare(user.password.toString(), userFound.password)
+const auth = async (user) => {
+  try {
+    const userExists = await findUser(user);
+    if(!userExists) return;
+
+    const isPasswordValid = await bcrypt.compare(user.password.toString(), userExists.password);
   
-  const token = jwt.sign({
-    user: userFound.username,
-    password: userFound.password,
-  }, 'CruzeiroÉCabuloso', {
-    expiresIn: '5h'
-  })
-  
-  return {
-    isPasswordValid,
-    token,
+    if(isPasswordValid){
+      
+      const token = jwt.sign({
+        user: {
+          ...userExists
+        },
+      }, 'CruzeiroÉCabuloso', {
+        expiresIn: '5h'
+      });
+
+      return {
+        isPasswordValid,
+        token,
+      };
+
+    } else {
+        return {
+          isPasswordValid
+        };
+    }
+  } catch (error) {
+    throw new Error(error);
   }
+  
 };
 
 module.exports = {
   findUser,
-  insertUser,
+  createUser,
   auth,
 };

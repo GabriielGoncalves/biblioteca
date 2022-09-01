@@ -1,56 +1,55 @@
 const db = require("../model/database");
 const app = require("express")();
-const authentication = require('../services/auth')
-const verifyToken = require('../middleware/verifyToken')
+const authentication = require("../services/auth");
+const verifyToken = require("../middleware/verifyToken");
 
-
-app.post('/register', async (req, res) => {
-  const user = req.body
-  try {
-    let usuario = await authentication.findUser(user)
-    if(usuario){
-      res.status(200).json({message: `Usuario ${usuario.username} já está cadastrado!`})
-    }else {
-      const newUser = await authentication.insertUser(user)
-      await db.insertUser(newUser)
-      res.status(200).json({message: `Usuario ${newUser.username} cadastrado!`})
-    }
-  } catch (error) {
-    res.status(404).json({ message: error });
-    throw new Error(error);
-  }
-})
-
-app.post('/login', async (req, res) => {
-  const user = req.body
+app.post("/register", async (req, res) => {
+  const user = req.body;
 
   try {
-    const userFound = await authentication.findUser(user)
-    if(userFound){
-      const isAuthentication = await authentication.auth(user, userFound)
-      console.log(isAuthentication.token)
-      if(!!isAuthentication){
-        res.status(200).json({message: `Bem vindo ${user.username}`})
-      }else {
-        res.status(400).json({message: `Usuario ou senha incorretos! Tente novamente.`})
-      }
+    let userExists = await authentication.findUser(user);
 
+    if (userExists) {
+      res.status(200).json({message: `Usuario ${userExists.username} já está cadastrado!`});
     } else {
-        res.status(400).json({message: `Usuario não cadastrado, favor cadastrar.`})
-      }
+        const newUser = await authentication.createUser(user);
+        await db.insertUser(newUser);
+        res.status(201).json({ message: `Usuario ${newUser.username} cadastrado!`});
+    }
+
   } catch (error) {
-    res.status(404).json({ message: error });
-    throw new Error(error);
+    res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
   }
-})
+});
+
+app.post("/login", async (req, res) => {
+  const user = req.body;
+
+  try {
+    const userExists = await authentication.auth(user); 
+
+    if(!userExists) {
+      res.status(400).json({ message: `Usuario não cadastrado, favor cadastrar.` });
+    }
+    else if(userExists && userExists.isPasswordValid) {
+      console.log(userExists.token);
+      res.status(200).json({ message: `Bem vindo ${user.username}` });
+    } 
+    else {
+      res.status(400).json({ message: `Usuario ou senha incorretos! Tente novamente.` });
+    }
+
+  } catch (error) {
+      res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
+  }
+});
 
 app.get("/books", async (req, res) => {
   try {
     const result = await db.findBooks();
-    res.status(200).json(result);
+    res.status(200).json({message: result});
   } catch (error) {
-    res.status(404).json({ message: "nada bom" });
-    throw new Error(error);
+    res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
   }
 });
 
