@@ -45,7 +45,7 @@ const auth = async (user) => {
         user: {
           ...userExists
         },
-      }, 'CruzeiroÉCabuloso', {
+      }, process.env.JWT_SECRET, {
         expiresIn: '5h'
       });
 

@@ -3,10 +3,10 @@ const app = require("express")();
 const authentication = require("../services/auth");
 const verifyToken = require("../middleware/verifyToken");
 const validate = require('../services/validateDate')
+const dotenv = require('dotenv').config()
 
 app.post("/register", async (req, res) => {
   const user = req.body;
-
   try {
     let userExists = await authentication.findUser(user);
 
