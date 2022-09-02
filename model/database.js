@@ -3,7 +3,6 @@ const {userSchema, bookSchema} = require('./models')
 const User = mongoose.model('User', userSchema)
 const Book = mongoose.model('Book', bookSchema)
 
-
 const insertUser = async (user) => {
   try {
     const newUser = new User(user)
@@ -44,30 +43,35 @@ const findBooks = async () => {
   }
 };
 
-// const deleteBook = async (_id) => {
-//   await connectDataBase();
-//   const collection = client.db(dbName).collection(collectionEstoque);
-//   const results = await collection.deleteOne({ _id: ObjectId(_id) });
-//   client.close();
-//   return results;
-// };
+const deleteBook = async (id) => {
+  try {
+    const results = await Book.findByIdAndDelete({ _id: id });
+    return results;
+  } catch (error) {
+    throw new Error(error)
+  }
+};
 
-// const updateBook = async (_id, documento) => {
-//   await connectDataBase();
-//   const collection = client.db(dbName).collection(collectionEstoque);
-//   const results = await collection.updateOne(
-//     { _id: ObjectId(_id) },
-//     { $set: documento }
-//   );
-//   client.close();
-//   return results;
-// };
+/**
+ * Nas outras rotas eram necessário que fossem criado um novo objeto da classe User ou Book
+ * Na parte do update não será necessário, pois se criar com o modelo, vai vir com outro id
+ * O que não deixará atualizar, pois o id tem que ser imutavel
+ */
+const updateBook = async (id, book) => {
+  try {
+    const results = await Book.findOneAndUpdate({'_id': id}, book)
+    return results;
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+};
 
 module.exports = {
   insertBook,
   findBooks,
-  // updateBook,
-  // deleteBook,
+  updateBook,
+  deleteBook,
   insertUser,
   searchUser,
 };

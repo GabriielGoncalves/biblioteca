@@ -85,18 +85,29 @@ app.delete("/delete/:id", verifyToken, async (req, res) => {
   const id = req.params.id
   try {
     const result = await db.deleteBook(id);
-    res.status(200).json({ message: "Deletado com sucesso" });
+    if(result){
+      res.status(200).json({ message: "Deletado com sucesso" });
+    }else {
+      res.status(400).json({message: "Livro não encontrado"})
+    }
   } catch (error) {
     res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
   }
 });
 
 app.put("/update/:id", verifyToken, async (req, res) => {
-  const [id, body] = [req.params, req.body];
+  let book = req.body
 
   try {
-    const result = await db.updateBook(id, body);
-    res.status(200).json({ message: "Atualizado com sucesso" });
+    const dateValid = validate(book.release)
+    book.release = dateValid
+    const result = await db.updateBook(req.params.id, book);
+    
+    if(result){
+      res.status(201).json({ message: "Livro atualizado com sucesso" });
+    }else {
+      res.status(400).json({message: "Livro não foi atualizado, pois o mesmo não foi encontrado!"})
+    }
   } catch (error) {
     res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
   }
