@@ -5,8 +5,6 @@ const routes = require("./controller/controller");
 const mongoose = require("mongoose");
 const dotenv = require('dotenv').config()
 
-
-const port = 3031;
 const app = express();
 
 app.use(cors());
@@ -20,12 +18,12 @@ app.use("/", routes);
   mongoose
     .connect(process.env.DB_HOST, { autoIndex: false })
     .then(() => {
-      app.listen(port, () => {
-        console.log(`Server is running in the port ${port}`);
+      app.listen(process.env.PORT, () => {
+        console.log(`Server is running in the port ${process.env.PORT}`);
       });
     })
-    .catch((e) => {
-      console.log(e);
+    .catch((error) => {
+      console.log(error)
       throw new Error(`Ocorreu um erro. Tente novamente mais tarde!`);
     });
 })();
