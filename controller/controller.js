@@ -54,6 +54,22 @@ app.get("/books", async (req, res) => {
   }
 });
 
+app.get('/books/:id', async (req, res) => {
+  try {
+    const {id} = req.params
+    const result = await db.findBook(id)
+    
+    if(result){
+      res.status(200).json({message: result})
+    } else {
+        res.status(200).json({message: "Livro inexistente!"})
+    }
+
+  } catch (error) {
+      res.status(500).json({ message: "Erro. Tente novamente mais tarde!" });
+  }
+})
+
 app.post("/insert", verifyToken,async (req, res) => {
   const book = req.body;
   
@@ -82,7 +98,7 @@ app.post("/insert", verifyToken,async (req, res) => {
 });
 
 app.delete("/delete/:id", verifyToken, async (req, res) => {
-  const id = req.params.id
+  const {id} = req.params
   try {
     const result = await db.deleteBook(id);
     if(result){

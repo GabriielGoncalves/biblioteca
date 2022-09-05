@@ -67,6 +67,15 @@ const updateBook = async (id, book) => {
   }
 };
 
+const findBook = async (id) => {
+  try {
+    const result = await Book.findById({_id: id})
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 module.exports = {
   insertBook,
   findBooks,
@@ -74,4 +83,5 @@ module.exports = {
   deleteBook,
   insertUser,
   searchUser,
+  findBook
 };
