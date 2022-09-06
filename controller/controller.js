@@ -129,4 +129,15 @@ app.put("/update/:id", verifyToken, async (req, res) => {
   }
 });
 
+app.post('/books', async (req, res) => {
+  try {
+    const query = req.query
+    let result = await db.findBookName(query)
+    result = result ? result : "Nenhum livro encontrado com esse nome" 
+    res.status(200).json({message: result})
+  } catch (error) {
+    res.status(500).json({message: "Erro. Tente novamente mais tarde!"})
+  }
+})
+
 module.exports = app;

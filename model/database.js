@@ -76,6 +76,15 @@ const findBook = async (id) => {
   }
 }
 
+const findBookName = async (query) => {
+  try {
+    const result = await Book.findOne(query)
+    return result
+  } catch (error) {
+      throw new Error(error)
+  }
+}
+
 module.exports = {
   insertBook,
   findBooks,
@@ -83,5 +92,6 @@ module.exports = {
   deleteBook,
   insertUser,
   searchUser,
-  findBook
+  findBook,
+  findBookName,
 };
