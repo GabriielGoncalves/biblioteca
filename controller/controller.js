@@ -3,12 +3,12 @@ const app = require("express")();
 const authentication = require("../services/auth");
 const verifyToken = require("../middleware/verifyToken");
 const validate = require('../services/validateDate')
-const dotenv = require('dotenv').config()
+require('dotenv').config()
 
 app.post("/register", async (req, res) => {
   const user = req.body;
   try {
-    let userExists = await authentication.findUser(user);
+    const userExists = await authentication.findUser(user);
 
     if (userExists) {
       res.status(200).json({message: `Usuario ${userExists.username} já está cadastrado!`});
@@ -32,7 +32,7 @@ app.post("/login", async (req, res) => {
     if(!userExists) {
       res.status(400).json({ message: `Usuario não cadastrado, favor cadastrar.` });
     }
-    else if(userExists && userExists.isPasswordValid) {
+    else if(userExists.userFound.active && userExists.isPasswordValid) {
       console.log(userExists.token);
       res.status(200).json({ message: `Bem vindo ${user.username}` });
     } 

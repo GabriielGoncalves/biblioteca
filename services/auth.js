@@ -17,7 +17,10 @@ const findUser = async (user) => {
 
 const createUser = async (user) => {
   try {
-    let newUser = {...user};
+    let newUser = {
+      ...user,
+      active: true
+    };
 
     const newPassword = await bcrypt.hash(
       user.password.toString(),
@@ -34,31 +37,28 @@ const createUser = async (user) => {
 
 const auth = async (user) => {
   try {
-    const userExists = await findUser(user);
-    if(!userExists) return;
+    const userFound = await findUser(user);
+    if(!userFound) return;
 
-    const isPasswordValid = await bcrypt.compare(user.password.toString(), userExists.password);
+    const isPasswordValid = await bcrypt.compare(user.password.toString(), userFound.password);
   
-    if(isPasswordValid){
+    if(isPasswordValid && userFound.active){
       
       const token = jwt.sign({
         user: {
-          ...userExists
+          ...userFound
         },
       }, process.env.JWT_SECRET, {
         expiresIn: '5h'
       });
 
       return {
+        userFound,
         isPasswordValid,
         token,
       };
 
-    } else {
-        return {
-          isPasswordValid
-        };
-    }
+    } else return isPasswordValid;
   } catch (error) {
     throw new Error(error);
   }
