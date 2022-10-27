@@ -4,6 +4,9 @@ const authentication = require("../services/auth");
 const verifyToken = require("../middleware/verifyToken");
 const validate = require('../services/validateDate')
 require('dotenv').config()
+const multer = require('multer')
+const upload = multer({dest: './uploads/'})
+const {validateMimeType} = require('../services/validateImage')
 
 app.post("/register", async (req, res) => {
   const user = req.body;
@@ -70,9 +73,8 @@ app.get('/books/:id', async (req, res) => {
   }
 })
 
-app.post("/insert", verifyToken,async (req, res) => {
+app.post("/insert", verifyToken,upload.single('photo'), async (req, res) => {
   const book = req.body;
-  
   try {
     const newRelease = validate(book.release);
     const newBook = {
